@@ -1,11 +1,11 @@
-import { CarProps } from "@/types";
+import { CarProps, FilterProps } from "@/types";
 
-export async function fetchCars() {
+export async function fetchCars(filters: FilterProps) {
     const headers = {
         "X-Api-Key": "HIIteJJDwDd3vHNDi0sOGg==2sFztgpwGkgxjbe9",
     };
 
-    const url = "https://api.api-ninjas.com/v1/cars?model=q3";
+    const url = `https://api.api-ninjas.com/v1/cars?make=${filters.manufacturer}&model=${filters.model}&year=${filters.year}&fuel_type=${filters.fuel}&limit=${filters.limit}`;
 
     const response = await fetch(url, { headers: headers });
 
@@ -29,7 +29,7 @@ export const calculateCarRent = (city_mpg: number, year: number) => {
     return rentalRatePerDay.toFixed(0);
 };
 
-export const generateCarImageUrl = (car : CarProps, angle?: string) => {
+export const generateCarImageUrl = (car: CarProps, angle?: string) => {
     const url = new URL("https://cdn.imagin.studio/getimage");
 
     const { make, model, year } = car;
@@ -37,13 +37,21 @@ export const generateCarImageUrl = (car : CarProps, angle?: string) => {
     url.searchParams.append("customer", "hrjavascript-mastery");
     url.searchParams.append("make", make);
     url.searchParams.append("modelFamily", model.split(" ")[0]);
-    url.searchParams.append("zoomType", 'fullscreen');
+    url.searchParams.append("zoomType", "fullscreen");
     url.searchParams.append("modelYear", `${year}`);
     url.searchParams.append("angle", `${angle}`);
 
     return url.toString();
+};
 
+export const updateSearchParams = (title: string, value: string) => {
+    const searchParams = new URLSearchParams(window.location.search);
 
+    searchParams.set(title, value);
 
+    const newPathname = `${
+        window.location.pathname
+    }?${searchParams.toString()}`;
 
+    return newPathname;
 };
